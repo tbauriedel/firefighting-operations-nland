@@ -1,0 +1,15 @@
+[Unit]
+Description=Firefighting operations nland
+After=network.target
+
+[Service]
+Type=simple
+User=firefighting-operations-nland
+Group=firefighting-operations-nland
+ExecStart=/usr/local/bin/firefighting-operations-nland
+SyslogIdentifier=firefighting-operations-nland
+StandardError=journal
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

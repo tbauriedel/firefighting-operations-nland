@@ -1,0 +1,4 @@
+telegram_bot_id: ""
+telegram_chat_id: 0
+scraper_interval: 10s
+debug: false
