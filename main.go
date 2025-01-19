@@ -55,6 +55,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("Telegram bot instance created. Start program...")
 
 	for {
 		s := scraper.New()
@@ -79,13 +80,32 @@ func handleOperations(s *scraper.Scraper, t telegram.Bot) {
 		lastFoundOperation := s.Operations[0]
 
 		if lastSentOperation != lastFoundOperation {
-			log.Print("new operation found!")
-			sendErr := t.Send(config.Config.TelegramChatID, buildMessage(s.Operations[0]))
-			if sendErr != nil {
-				log.Fatal(sendErr)
+			hasBeenSent := false
+
+			for !hasBeenSent {
+				func() {
+					defer func() {
+						if r := recover(); r != nil {
+							log.Printf("Unable to post message. Has recovered: %v\n Will try again in 2 seconds...", r)
+							time.Sleep(2 * time.Second)
+						}
+					}()
+
+					sendErr := t.Send(config.Config.TelegramChatID, buildMessage(s.Operations[0]))
+					if sendErr != nil {
+						message := fmt.Sprintf(
+							"Unable to send operation. Error: %v\nOperation: %#v",
+							sendErr, s.Operations[0])
+						panic(message)
+					}
+
+					log.Printf("Operation sent to telegram. %#v", s.Operations[0])
+					hasBeenSent = true
+				}()
 			}
-			lastSentOperation = lastFoundOperation
 		}
+
+		lastSentOperation = lastFoundOperation
 	}
 }
 

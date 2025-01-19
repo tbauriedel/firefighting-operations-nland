@@ -11,8 +11,10 @@ import (
 )
 
 const DefaultConfigDir = "/etc/firefighting-operations-nland"
-const DefaultUser = "firefighting-operations-nland"
-const DefaultGroup = "firefighting-operations-nland"
+
+//const DefaultConfigDir = "./"
+//const DefaultUser = "firefighting-operations-nland"
+//const DefaultGroup = "firefighting-operations-nland"
 
 type c struct {
 	TelegramBotID   string        `yaml:"telegram_bot_id"`

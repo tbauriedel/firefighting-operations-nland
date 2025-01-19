@@ -3,8 +3,6 @@ package telegram
 import (
 	"fmt"
 	t "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"log"
-	"strings"
 )
 
 type Bot struct {
@@ -28,8 +26,6 @@ func (b *Bot) Send(chatId int64, message string) error {
 	if _, err := b.Instance.Send(m); err != nil {
 		return err
 	}
-
-	log.Printf("new operation has been sent. Message: %s", strings.Replace(message, "\n", "\\n", -1))
 
 	return nil
 }
