@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"strconv"
 	"time"
 )
 
@@ -33,13 +34,37 @@ func GetConfigDefaults() c {
 }
 
 func ReadConfig() (c, error) {
+	conf := GetConfigDefaults()
+
+	// Check environment variables
+	if botID := os.Getenv("TELEGRAM_BOT_ID"); botID != "" {
+		conf.TelegramBotID = botID
+	}
+
+	if chatID := os.Getenv("TELEGRAM_CHAT_ID"); chatID != "" {
+		chatIDInt, err := strconv.ParseInt(chatID, 10, 64)
+		if err != nil {
+			return c{}, fmt.Errorf("invalid TELEGRAM_CHAT_ID: %w", err)
+		}
+		conf.TelegramChatID = chatIDInt
+	}
+
+	if interval := os.Getenv("SCRAPER_INTERVAL"); interval != "" {
+		intervalDuration, err := time.ParseDuration(interval)
+		if err != nil {
+			return c{}, fmt.Errorf("invalid SCRAPER_INTERVAL: %w", err)
+		}
+		conf.ScraperInterval = intervalDuration
+	}
+
+	if conf.TelegramBotID != "" || conf.TelegramChatID != 0 || conf.ScraperInterval != 0 {
+		return conf, nil
+	}
 
 	fileData, err := os.ReadFile(path.Join(DefaultConfigDir, "config.yaml"))
 	if err != nil {
 		return c{}, fmt.Errorf("failed to read config.yaml: %w", err)
 	}
-
-	conf := c{}
 
 	err = yaml.Unmarshal(fileData, &conf)
 	if err != nil {

@@ -81,7 +81,6 @@ func handleOperations(s *scraper.Scraper, t telegram.Bot) {
 
 		if lastSentOperation != lastFoundOperation {
 			hasBeenSent := false
-
 			for !hasBeenSent {
 				func() {
 					defer func() {
